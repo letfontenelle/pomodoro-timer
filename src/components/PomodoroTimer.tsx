@@ -6,6 +6,7 @@ import { PlayIcon, PauseIcon, FlagIcon, RefreshCwIcon, ArrowLeftIcon } from 'luc
 import UserRegistration from './UserRegistration'
 
 export default function PomodoroTimer() {
+  // Estados para controlar o modo, tempos, execução, voltas e nome do usuário
   const [isBreakMode, setIsBreakMode] = useState(false)
   const [initialPomodoroTime, setInitialPomodoroTime] = useState(25 * 60)
   const [initialBreakTime, setInitialBreakTime] = useState(5 * 60)
@@ -15,6 +16,7 @@ export default function PomodoroTimer() {
   const [isFinished, setIsFinished] = useState(false)
   const [userName, setUserName] = useState('')
 
+  // Efeito para gerenciar o timer
   useEffect(() => {
     let interval: NodeJS.Timeout
 
@@ -35,15 +37,18 @@ export default function PomodoroTimer() {
     return () => clearInterval(interval)
   }, [isRunning])
 
+  // Função para alternar entre iniciar e pausar o timer
   const toggleTimer = () => {
     setIsRunning(!isRunning)
   }
 
+  // Função para registrar uma volta (lap)
   const recordLap = () => {
     const lapTime = formatTime(time)
     setLaps([...laps, { time: lapTime, name: userName }])
   }
 
+  // Função para reiniciar o timer
   const restartTimer = () => {
     setTime(isBreakMode ? initialBreakTime : initialPomodoroTime)
     setIsRunning(false)
@@ -51,12 +56,14 @@ export default function PomodoroTimer() {
     setIsFinished(false)
   }
 
+  // Função para formatar o tempo em minutos e segundos
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60)
     const seconds = timeInSeconds % 60
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
   }
 
+  // Função para lidar com a mudança do tempo do Pomodoro
   const handlePomodoroTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newMinutes = parseInt(e.target.value, 10)
     if (!isNaN(newMinutes) && newMinutes > 0) {
@@ -66,6 +73,7 @@ export default function PomodoroTimer() {
     }
   }
 
+  // Função para lidar com a mudança do tempo de pausa
   const handleBreakTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newMinutes = parseInt(e.target.value, 10)
     if (!isNaN(newMinutes) && newMinutes > 0 && newMinutes <= 15) {
@@ -75,6 +83,7 @@ export default function PomodoroTimer() {
     }
   }
 
+  // Função para alternar entre o modo Pomodoro e o modo de pausa
   const toggleMode = () => {
     setIsBreakMode(!isBreakMode)
     setTime(isBreakMode ? initialPomodoroTime : initialBreakTime)
@@ -83,19 +92,23 @@ export default function PomodoroTimer() {
     setIsFinished(false)
   }
 
+  // Função para voltar ao timer após a conclusão
   const handleBackToTimer = () => {
     setIsFinished(false)
     restartTimer()
   }
 
+  // Função para lidar com o registro do usuário
   const handleUserRegistration = (name: string) => {
     setUserName(name)
   }
 
+  // Renderiza o componente de registro de usuário se não houver nome de usuário
   if (!userName) {
     return <UserRegistration onSubmit={handleUserRegistration} />
   }
 
+  // Renderiza a tela de conclusão se o timer terminou
   if (isFinished) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -111,6 +124,7 @@ export default function PomodoroTimer() {
     )
   }
 
+  // Renderiza o componente principal do Pomodoro Timer
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
